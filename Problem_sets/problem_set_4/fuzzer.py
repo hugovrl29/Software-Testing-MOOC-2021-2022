@@ -61,7 +61,7 @@ import random, logging
 
 def file_fuzzer(manual):
     """
-    Fuzzing random files in random programs
+    Fuzzer for the pdf reader to test
 
     Parameter
     ---------
@@ -76,11 +76,7 @@ def file_fuzzer(manual):
 
     if not manual: #seed contenant tous les fichiers dans le cas ou l'utilisateur ne rentre pas l'adresse
         test_files = [
-            'Test_1.pdf', 'Test_2.pdf',
-            'Test_1.jpg', 'Test_2.jpg',
-            'Test_1.png', 'Test_2.png',
-            'Test_1.mp4', 'Test_2.mp4',
-            'Test_1.txt', 'Test_2.txt']
+            'Test_1.pdf', 'Test_2.pdf']
         selected_file = random.choice(test_files)
         selected_file_address = 'problem_set_4' + '\\' + 'fichiers_test'+'\\' + random.choice(test_files)
     else:
@@ -88,28 +84,19 @@ def file_fuzzer(manual):
 
 
     file_name = selected_file_address.split(".")
-    extension = file_name[(len(file_name) - 1)] #extension pour fichier de sortie
-
-
-    #choix du programme adequat pour ovrir le fichier de sortie
-    if extension in ['mp4', 'mov', 'avi', 'wmv', 'mp3']:
-        selected_program = random.choice(['C:\Program Files\VideoLAN\VLC\\vlc.exe', 'C:\Program Files (x86)\GRETECH\GOMPlayer\GOM.exe'])
-    elif extension in ['jpg', 'jpeg', 'png', 'gif']:
-        selected_program = random.choice(['C:\Program Files (x86)\Windows Live\Photo Gallery\WLXPhotoGallery.exe', 'C:\WINDOWS\system32\mspaint.exe'])
-    elif extension == 'pdf':
-        selected_program = random.choice(['C:\Program Files (x86)\PDFsam Basic\pdfsam.exe', 'C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe'])
-    elif extension == 'txt':
-        selected_program = 'C:\Program Files (x86)\AbiSuite2\AbiWord\\bin\AbiWord.exe'
+    if len(file_name) != 1: #extension pour fichier de sortie
+        extension = file_name[(len(file_name) - 1)]
     else:
-        print('Impossible de fuzzer ce fichier')
-        logging.debug('Impossible de fuzzer ce fichier')
-        return
+        extension = ""
+    program_to_test = "/Applications/Zotero.app" #programme en version beta à tester
 
-    program_name = selected_program.split("\\")
-    selected_program_name = program_name[(len(program_name) - 1)]
 
-    print('Fuzzing du fichier %s avec le logiciel %s en cours ...'%(selected_file, selected_program_name))
-    logging.debug('Fuzzing du fichier %s avec le logiciel %s en cours ...'%(selected_file, selected_program_name))
+    #conversion en pdf dans le cas ou le fichier entré n'est pas un fichier pdf
+    if extension != "pdf":
+        extension = "pdf"
+
+    print('Fuzzing du fichier %s avec le logiciel en cours ...'%(selected_file))
+    logging.debug('Fuzzing du fichier %s avec le logiciel en cours ...'%(selected_file))
 
 
     #stocker les donées binaires du fichier choisi
@@ -140,7 +127,7 @@ def file_fuzzer(manual):
         return
 
     #lire le fichier de sortie
-    process = subprocess.Popen([selected_program, output_file])
+    process = subprocess.Popen([program_to_test, output_file])
 
     #mettre fin au processus de lecture du fichier
 
@@ -194,8 +181,8 @@ def random_tester(max_num):
 
     #suppression des fichiers générés si possible
 
-    print('Suppression des fichiers générés en cours ...\n')
-    logging.debug('Suppression des fichiers generes en cours ...\n')
+    print('Suppression du fichier généré en cours ...\n')
+    logging.debug('Suppression du fichier genere en cours ...\n')
 
     if exists('problem_set_4\\fuzz_output.pdf'):
         try:
@@ -206,52 +193,13 @@ def random_tester(max_num):
         except PermissionError:
             print('Erreur lors de la suppression du fichier de sortie pdf ...')
             logging.debug('Erreur lors de la suppression du fichier de sortie pdf ...')
-
-    if exists('problem_set_4\\fuzz_output.jpg'):
-        try:
-            remove('problem_set_4\\fuzz_output.jpg')
-            print('Le fichier de sortie jpg a été supprimé ...')
-            logging.debug('Le fichier de sortie jpg a ete supprime ...')
-
-        except PermissionError:
-            print('Erreur lors de la suppression du fichier de sortie jpg ...')
-            logging.debug('Erreur lors de la suppression du fichier de sortie jpg ...')
-
-    if exists('problem_set_4\\fuzz_output.png'):
-        try:
-            remove('problem_set_4\\fuzz_output.png')
-            print('Le fichier de sortie png a été supprimé ...')
-            logging.debug('Le fichier de sortie png a ete supprime ...')
-
-        except PermissionError:
-            print('Erreur lors de la suppression du fichier de sortie png ...')
-            logging.debug('Erreur lors de la suppression du fichier de sortie png ...')
-
-    if exists('problem_set_4\\fuzz_output.mp4'):
-        try:
-            remove('problem_set_4\\fuzz_output.mp4')
-            print('Le fichier de sortie mp4 a été supprimé ...')
-            logging.debug('Le fichier de sortie mp4 a ete supprime ...')
-
-        except PermissionError:
-            print('Erreur lors de la suppression du fichier de sortie mp4 ...')
-            logging.debug('Erreur lors de la suppression du fichier de sortie mp4 ...')
-
-    if exists('problem_set_4\\fuzz_output.txt'):
-        try:
-            remove('problem_set_4\\fuzz_output.txt')
-            print('Le fichier de sortie txt a été supprimé ...')
-            logging.debug('Le fichier de sortie txt a ete supprime ...')
-        except PermissionError:
-            print('Erreur lors de la suppression du fichier de sortie txt ...')
-            logging.debug('Erreur lors de la suppression du fichier de sortie txt ...')
     else:
         print('Impossible de supprimer fuzz_output.pdf ...\n')
         logging.debug('Impossible de supprimer fuzz_output.pdf ...\n')
 
 
-    print('Fin de l\'étape de suppression des fichiers ...\n\n')
-    logging.debug('Fin de l\'etape de suppression des fichiers ...\n\n')
+    print('Fin de l\'étape de suppression du fichier ...\n\n')
+    logging.debug('Fin de l\'etape de suppression du fichier ...\n\n')
 
 #enregistrer les tests de fuzz dans un fichier de logs
 logging.basicConfig(filename="problem_set_4\\random_tests.log", format='%(asctime)s %(message)s', level=logging.DEBUG)
