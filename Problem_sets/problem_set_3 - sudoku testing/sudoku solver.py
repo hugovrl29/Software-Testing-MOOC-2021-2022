@@ -1,4 +1,4 @@
-import random, math
+import random, math, copy
 # CHALLENGE PROBLEM: 
 #
 # Use your check_sudoku function as the basis for solve_sudoku(): a
@@ -217,7 +217,6 @@ def check_sudoku(grid):
     #return true if all is ok
     else:
         return True
-    pass
 
 def solve_sudoku (grid):
     
@@ -227,23 +226,26 @@ def solve_sudoku (grid):
         return None
     elif check_sudoku(grid) == False:
         return False
+    elif check_sudoku(grid):
+        return(grid)
     else:
+        _grid = copy.deepcopy(grid) # no overwrite the existing grids
         
         #change each 0 by an int and verify each time
         for row in range(9): #column
             for num in range(9): #line
-                if  grid[row][num] == 0:
+                if  _grid[row][num] == 0:
                     # replace each 0 by {i | 0 < i < 10}
                     for i in range(1,10):
-                        grid[row][num] = i
-                        if check_sudoku(grid) == True: 
+                        _grid[row][num] = i
+                        if check_sudoku(_grid) == True: 
                             #verify that the grid is still correct
-                            if solve_sudoku(grid) != False:#backtracking point in case it is false
-                                return solve_sudoku(grid)
+                            if solve_sudoku(_grid) != False:#backtracking point in case it is false
+                                return solve_sudoku(_grid)
                     #replace by 0 if it's not correct
-                    grid[row][num] = 0
+                    _grid[row][num] = 0
                     return False
-    return grid
+    return _grid
 
 def sudoku_generator():
     grid = [[0]*9]*9
@@ -304,13 +306,14 @@ def random_testing(num_tests):
     print('\nSur %d tests, il y a eu un taux de %d pourcent d\'échecs, soit un total de %d echecs \n\n'%(num_tests, fails_counter, fails))
 
 def fuzz_testing(grid):
+    _grid = copy.deepcopy(grid) # éviter les réécritures
     FuzzFactor = 250
     num_of_changes = random.randrange(math.ceil(81**2/FuzzFactor)) #nombre de réécritures
 
     for i in range(num_of_changes):
-        random.shuffle(grid) # mélanger l'ordre des lignes du sudoku
-        [random.shuffle(subgrid) for subgrid in grid] # mélanger l'ordre des lignes
-    return grid
+        random.shuffle(_grid) # mélanger l'ordre des lignes du sudoku
+        [random.shuffle(subgrid) for subgrid in _grid] # mélanger l'ordre des lignes
+    return _grid
 
 
 blackbox_testing()
