@@ -1,4 +1,4 @@
-import random
+import random, math
 # CHALLENGE PROBLEM: 
 #
 # Use your check_sudoku function as the basis for solve_sudoku(): a
@@ -257,7 +257,7 @@ def display_grid(grid):
         for line in grid:
             print(line)
     else:
-        print('Ce sudoku n\'est pas lisible')
+        print('Ce sudoku n\'a pas de solution')
 
 def blackbox_testing():
     print('Début du blackbox testing')
@@ -277,15 +277,15 @@ def blackbox_testing():
         
         display_grid(grid)
         display_grid(solve_sudoku(grid)) #should return None
-    print('Fin du blackbox testing \n\n')
+    print('\nFin du blackbox testing \n\n')
 
 def random_testing(num_tests):
     print('Debut du random testing sur des grilles generées aleatoirement')
-    print('Il y aura un total de %d tests'%(num_tests))
+    print('\nIl y aura un total de %d tests'%(num_tests))
     fails = 0
     for i in range(num_tests):
         grid_to_solve = sudoku_generator() # create a random grid
-        print('Generation de la grille numero %d'%(i))
+        print('\nGeneration de la grille numero %d'%(i))
         display_grid(grid_to_solve)
         result = solve_sudoku(grid_to_solve)
         if result == False:
@@ -300,8 +300,43 @@ def random_testing(num_tests):
         print('Fin de la résolution de la grile numero %d'%(i))
 
     fails_counter = (fails/num_tests) * 100
-    print('Fin du random testing')
-    print('Sur %d tests, il y a eu un taux de %d pourcent d\'échecs, soit un total de %d echecs'%(num_tests, fails_counter, fails))
+    print('\nFin du random testing')
+    print('\nSur %d tests, il y a eu un taux de %d pourcent d\'échecs, soit un total de %d echecs \n\n'%(num_tests, fails_counter, fails))
+
+def fuzz_testing(grid):
+    FuzzFactor = 250
+    num_of_changes = random.randrange(math.ceil(81**2/FuzzFactor)) #nombre de réécritures
+
+    for i in range(num_of_changes):
+        random.shuffle(grid) # mélanger l'ordre des lignes du sudoku
+        [random.shuffle(subgrid) for subgrid in grid] # mélanger l'ordre des lignes
+    return grid
+
 
 blackbox_testing()
 random_testing(50)
+
+
+print('Début du testing avec fuzzer sur les sudoku préconçus')
+for grid in [ill_formed, valid, invalid, easy, hard]:
+    print('\nTest du solveur sur le sudoku fuzzé:')
+    if grid == ill_formed:
+        print('mal conçu')
+    elif grid == valid:
+        print('valide')
+    elif grid == invalid:
+        print('invalide')
+    elif grid == easy:
+        print('facile')
+    elif grid == hard:
+        print('difficile')
+    display_grid(grid)
+    print('\nDébut du fuzzing')
+    fuzzed = fuzz_testing(grid)
+    print('\nFin du fuzzing, en voici le résultat:')
+    display_grid(fuzzed)
+    print('\nVoici la grille complétée:')
+    display_grid(solve_sudoku(fuzzed))
+    print('\nFin du test avec ce sudoku fuzzé')
+
+print('\nFin du fuzz testing')
