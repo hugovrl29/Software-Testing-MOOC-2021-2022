@@ -259,7 +259,7 @@ def display_grid(grid):
         for line in grid:
             print(line)
     else:
-        print('Ce sudoku n\'a pas de solution')
+        print('Ce sudoku n\'est pas affichable')
 
 def blackbox_testing():
     print('Début du blackbox testing')
@@ -303,7 +303,7 @@ def random_testing(num_tests):
 
     fails_counter = (fails/num_tests) * 100
     print('\nFin du random testing')
-    print('\nSur %d tests, il y a eu un taux de %d pourcent d\'échecs, soit un total de %d echecs \n\n'%(num_tests, fails_counter, fails))
+    print('\nSur %d tests, il y a eu un taux de %d %% d\'échecs, soit un total de %d echecs \n\n'%(num_tests, fails_counter, fails))
 
 def fuzz_testing(grid):
     _grid = copy.deepcopy(grid) # éviter les réécritures
@@ -320,7 +320,7 @@ blackbox_testing()
 random_testing(50)
 
 
-print('Début du testing avec fuzzer sur les sudoku préconçus')
+print('Début du testing avec fuzzer sur les sudoku préconçus:')
 for grid in [ill_formed, valid, invalid, easy, hard]:
     print('\nTest du solveur sur le sudoku fuzzé:')
     if grid == ill_formed:
