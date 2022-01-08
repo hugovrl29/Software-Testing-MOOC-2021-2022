@@ -287,6 +287,7 @@ def random_testing(num_tests):
         print('\nGeneration de la grille numero %d'%(i))
         display_grid(grid_to_solve)
         result = solve_sudoku(grid_to_solve)
+        print('\nRésolution de la grille en cours...\n')
         if result == False:
             print('Cette grille n\'est pas valide')
             fails += 1
