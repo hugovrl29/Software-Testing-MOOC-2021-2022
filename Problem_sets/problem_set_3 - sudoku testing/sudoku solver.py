@@ -248,10 +248,7 @@ def solve_sudoku (grid):
     return _grid
 
 def sudoku_generator():
-    grid = [[0]*9]*9
-    for i in range(9):
-        for j in range(9):
-            grid[i][j] = random.randint(0,9)
+    grid = [[random.randint(0, 9) for i in range(9)] for j in range(9)] # génération d'une grille avec des nombres aléatoires
     return grid
 
 def display_grid(grid):
