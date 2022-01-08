@@ -1,5 +1,4 @@
 import random
-import copy
 # CHALLENGE PROBLEM: 
 #
 # Use your check_sudoku function as the basis for solve_sudoku(): a
@@ -245,24 +244,64 @@ def solve_sudoku (grid):
                     grid[row][num] = 0
                     return False
     return grid
-    pass
+
+def sudoku_generator():
+    grid = [[0]*9]*9
+    for i in range(9):
+        for j in range(9):
+            grid[i][j] = random.randint(0,9)
+    return grid
+
+def display_grid(grid):
+    if check_sudoku(grid) is not None:
+        for line in grid:
+            print(line)
+    else:
+        print('Ce sudoku n\'est pas lisible')
 
 def blackbox_testing():
-    print(solve_sudoku(ill_formed)) #should return None
-    print(solve_sudoku(valid)) #should return valid
-    print(solve_sudoku(invalid)) #should return False
-    print(solve_sudoku(easy)) #should solve the grid
-    print(solve_sudoku(hard)) #should solve the grid
+    print('Début du blackbox testing')
+    for grid in [ill_formed, valid, invalid, easy, hard]:
+        print('Test du solveur sur le sudoku:')
+
+        if grid == ill_formed:
+            print('mal conçu')
+        elif grid == valid:
+            print('valide')
+        elif grid == invalid:
+            print('invalide')
+        elif grid == easy:
+            print('facile')
+        elif grid == hard:
+            print('difficile')
+        
+        display_grid(grid)
+        display_grid(solve_sudoku(grid)) #should return None
+    print('Fin du blackbox testing \n\n')
 
 def random_testing(num_tests):
+    print('Debut du random testing sur des grilles generées aleatoirement')
+    print('Il y aura un total de %d tests'%(num_tests))
+    fails = 0
     for i in range(num_tests):
-        random.choice(
-            solve_sudoku(ill_formed),
-            solve_sudoku(valid),
-            solve_sudoku(invalid),
-            solve_sudoku(easy),
-            solve_sudoku(hard)) #does random tests num_tests times
+        grid_to_solve = sudoku_generator() # create a random grid
+        print('Generation de la grille numero %d'%(i))
+        display_grid(grid_to_solve)
+        result = solve_sudoku(grid_to_solve)
+        if result == False:
+            print('Cette grille n\'est pas valide')
+            fails += 1
+        elif result == None:
+            print('Ceci n\'est pas une grille')
+            fails += 1
+        else:
+            print('Le résultat est le suivant:')
+            display_grid(result)
+        print('Fin de la résolution de la grile numero %d'%(i))
+
+    fails_counter = (fails/num_tests) * 100
+    print('Fin du random testing')
+    print('Sur %d tests, il y a eu un taux de %d pourcent d\'échecs, soit un total de %d echecs'%(num_tests, fails_counter, fails))
 
 blackbox_testing()
-random_testing(10000)
-
+random_testing(50)
