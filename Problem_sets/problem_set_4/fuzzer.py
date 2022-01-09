@@ -117,13 +117,13 @@ def file_fuzzer(manual):
     logging.debug('Fin de l\'etape de fuzzing ...')
 
     #fichier de sortie
-    output_file = "problem_set_4\\fuzz_output." + extension #fichier de sortie
+    output_file = "problem_set_4\\fuzz_output." + extension
 
     print('Ouverture du fichier de sortie en cours ...')
     logging.debug('Ouverture du fichier de sortie en cours ...')
     try:
         open(output_file, 'wb').write(buffer)
-    except PermissionError:
+    except PermissionError: # catch les PermissionError à l'ouverture
         return
 
     #lire le fichier de sortie
